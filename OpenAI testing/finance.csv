@@ -1,0 +1,114 @@
+Date,Time,Description,Transaction Type,Amount,Balance,Category
+2025-03-08,18:00:03,Refund,credit,438.49,7357.91,Income
+2025-03-09,18:05:03,Grocery shopping,debit,163.32,6919.42,Food
+2025-03-10,18:10:03,Electric bill,debit,216.6,7082.74,Housing
+2025-03-11,18:15:03,Refund,credit,525.9,7299.34,Income
+2025-03-12,18:20:03,Salary,credit,1006.28,6773.44,Income
+2025-03-13,18:25:03,Job income,credit,1007.48,5767.16,Income
+2025-03-14,18:30:03,Concert,debit,12.64,4759.68,Entertainment
+2025-03-15,18:35:03,Bonus,credit,261.66,4772.32,Income
+2025-03-16,18:40:03,Birthday gift,debit,61.62,4510.66,Gift
+2025-03-17,18:45:03,Netflix bill,debit,202.11,4572.28,Entertainment
+2025-03-18,18:50:03,Salary,credit,862.21,4774.39,Income
+2025-03-19,18:55:03,Refund,credit,908.02,3912.18,Income
+2025-03-20,19:00:03,Anniversary present,debit,44.56,3004.16,Gift
+2025-03-21,19:05:03,Spotify monthly,debit,101.17,3048.72,Entertainment
+2025-03-22,19:10:03,Freelance payment,credit,270.53,3149.89,Income
+2025-03-23,19:15:03,Train to city,debit,189.44,2879.36,Transport
+2025-03-24,19:20:03,Refund,credit,667.32,3068.8,Income
+2025-03-25,19:25:03,Bonus,credit,208.34,2401.48,Income
+2025-03-26,19:30:03,Bonus,credit,1296.01,2193.14,Income
+2025-03-27,19:35:03,Grocery shopping,debit,102.87,897.13,Food
+2025-03-27,19:39:37,Uncategorized,credit,300.0,1197.13,Pets
+2025-03-27,19:39:54,Uncategorized,credit,300.0,1497.13,Pets
+2025-03-27,19:40:36,Uncategorized,credit,300.0,1797.13,Pets
+2025-03-27,19:40:45,A Ps5 With Cash,cash,300.0,1497.13,Entertainment
+2025-03-27,19:41:49,Uncategorized,credit,3.0,1500.13,Pets
+2025-03-27,19:43:36,Gift From Joe,credit,300.0,1800.13,Gift
+2025-03-27,19:43:56,Gift From Both,credit,300.0,2100.13,Gift
+2025-03-27,19:47:27,Gift,credit,3000.0,102100.13,Gift
+2025-03-27,19:48:06,Gift From Kole,credit,3000.0,105100.13,Gift
+2025-03-27,19:50:41,Gift From Has,credit,3000.0,108100.13,Gift
+2025-03-27,19:51:12,New Bedroom,debit,10000.0,98100.13,Furniture
+2025-03-27,19:57:05,Gift From,credit,20.0,98120.13,Gift
+2025-03-27,19:57:21,Gift From,credit,20.0,98140.13,Gift
+2025-03-27,19:57:26,Gift From Joe,credit,20.0,98160.13,Gift
+2025-03-27,19:57:35,Gift From Johnathan,credit,123.0,98283.13,Gift
+2025-03-27,19:59:04,Sofa,debit,3000.0,95283.13,Furniture
+2025-03-27,20:08:08,Uncategorized,credit,2000.0,97283.13,Pets
+2025-03-27,20:10:23,Uncategorized,credit,9.0,97292.13,Pets
+2025-03-27,20:56:09,Sofa,debit,3000.0,94292.13,Furniture
+2025-03-27,20:57:54,Uncategorized,credit,30000.0,124292.13,Pets
+2025-03-20,21:03:55,Ps5,debit,300.0,123992.13,Entertainment
+2025-03-27,21:05:17,10 Eggs From Tesco,debit,3.0,123989.13,Food
+2025-03-27,21:06:43,Some Medicine,debit,5.0,123984.13,Health
+2025-04-02,04:39:01,5 Chairs,debit,3000.0,120984.13,Uncategorized
+2025-04-02,04:39:56,2 Chairs,cash,300.0,120684.13,Uncategorized
+2025-04-02,04:42:22,Another 3 Chairs,debit,20.0,120664.13,Misc
+2025-04-02,04:44:07,Groceries,debit,123.0,120541.13,Food
+2025-04-02,04:44:45,Gift,credit,30.0,120571.13,Gift
+2025-04-02,04:45:07,Xbos,debit,2.0,120569.13,Uncategorized
+2025-04-02,04:45:23,Ps5,debit,3.0,120566.13,Entertainment
+2025-04-02,04:47:30,Uncategorized,credit,2000.0,122566.13,Pets
+2025-04-02,04:47:52,Gift,credit,2000.0,124566.13,Gift
+2025-04-02,04:48:00,Uncategorized,credit,200.0,124766.13,Pets
+2025-04-02,04:48:24,Uncategorized,credit,200.0,124966.13,Pets
+2025-04-02,04:51:03,Uncategorized,credit,2000.0,126966.13,Pets
+2025-04-02,04:52:10,Uncategorized,credit,2000.0,128966.13,Pets
+2025-04-02,04:52:18,Uncategorized,credit,2000.0,130966.13,Misc
+2025-04-02,04:52:29,Uncategorized,credit,2000.0,132966.13,Misc
+2025-04-02,04:52:43,Uncategorized,credit,2000.0,134966.13,Misc
+2025-04-02,04:52:53,Uncategorized,credit,2000.0,136966.13,Misc
+2025-04-02,04:53:13,Raise From Boss,credit,2000.0,138966.13,Uncategorized
+2025-04-02,04:54:52,Uncategorized,credit,2000.0,140966.13,Misc
+2025-04-02,04:55:01,Uncategorized,credit,20.0,140986.13,Misc
+2025-04-02,04:55:15,Uncategorized,credit,20.0,141006.13,Misc
+2025-04-02,04:55:20,Uncategorized,credit,20.0,141026.13,Misc
+2025-04-02,04:56:06,20 Shoes,debit,20.0,141006.13,Clothing
+2025-04-02,04:59:28,Uncategorized,credit,20.0,141026.13,Misc
+2025-04-02,05:00:03,Gift From Mum,credit,20.0,141046.13,Gift
+2025-04-02,05:00:26,Uncategorized,credit,20.0,141066.13,Misc
+2025-04-02,05:01:33,Uncategorized,credit,20.0,141086.13,Misc
+2025-04-02,05:02:29,Gift From Dawg,credit,30.0,141116.13,Gift
+2025-04-02,05:02:49,Gift From Boss,credit,30.0,141146.13,Gift
+2025-04-02,05:03:18,Gift From Jester,credit,200.0,141346.13,Gift
+2025-04-02,05:03:28,Gift From Bombaclat,credit,20.0,141366.13,Gift
+2025-04-02,05:05:54,Uncategorized,credit,270.0,141636.13,Misc
+2025-04-02,05:06:02,Uncategorized,credit,280.0,141916.13,Misc
+2025-04-02,05:07:54,Uncategorized,credit,20.0,141936.13,Misc
+2025-04-02,05:07:59,Uncategorized,credit,20.0,141956.13,Misc
+2025-04-02,05:10:46,Uncategorized,credit,20.0,141976.13,Misc
+2025-04-02,05:11:22,Gift From Granny,credit,20.0,141996.13,Gift
+2025-04-02,05:12:37,Uncategorized,credit,20.0,142016.13,Misc
+2025-04-02,05:13:24,Gift From Dog,credit,20.0,142036.13,Gift
+2025-04-02,05:14:43,Some Stocks,debit,30000.0,112036.13,Uncategorized
+2025-04-02,05:15:41,Some Stocks,debit,30000.0,82036.13,Uncategorized bombaclat
+2025-04-02,05:17:21,Some Eyecare,debit,20.0,82016.13,Transport
+2025-04-02,05:17:45,Uncategorized,debit,20.0,81996.13,Misc
+2025-04-02,05:18:17,Uncategorized,debit,20.0,81976.13,Misc
+2025-04-02,05:18:32,Uncategorized,debit,20.0,81956.13,Misc
+2025-04-02,05:18:50,Uncategorized,debit,20.0,81936.13,Misc
+2025-04-02,05:18:57,Uncategorized,debit,20.0,81916.13,Misc
+2025-04-02,05:19:51,Ps5,debit,20.0,81896.13,Entertainment
+2025-04-02,05:20:03,Uncategorized,credit,20.0,81916.13,Misc
+2025-04-02,05:22:50,Ps5,debit,20.0,81896.13,Entertainment
+2025-04-02,05:23:21,Gift From Mum,credit,300.0,82196.13,Gift
+2025-04-02,05:23:45,Ps5,debit,82000.0,196.13,Entertainment
+2025-04-02,05:29:15,Uncategorized,debit,20.0,176.13,Misc
+2025-04-02,05:29:30,Shoes,debit,20.0,156.13,Clothing
+2025-04-02,05:29:50,Shoes,debit,20.0,136.13,Clothing
+2025-04-02,05:30:22,Uncategorized,debit,20.0,116.13,Misc
+2025-04-02,05:30:27,Uncategorized,debit,20.0,96.13,Misc
+2025-04-02,05:30:43,Shoes,debit,20.0,76.13,Clothing
+2025-04-02,05:31:55,Uncategorized,debit,20.0,56.129999999999995,Misc
+2025-04-02,05:32:07,Shoes,debit,20.0,36.129999999999995,Clothing
+2025-04-02,05:33:33,Uncategorized,debit,20.0,16.129999999999995,Misc
+2025-04-02,05:33:40,Uncategorized,credit,20.0,36.129999999999995,Misc
+2025-04-02,05:33:51,Uncategorized,credit,20.0,56.129999999999995,Misc
+2025-04-02,05:35:52,Uncategorized,debit,20.0,36.129999999999995,Misc
+2025-04-02,05:36:00,Gift From Boss,credit,150.0,186.13,Gift
+2025-04-02,05:36:12,Employer,credit,100.0,286.13,Uncategorized
+2025-04-02,05:36:41,Uncategorized,cash,100.0,186.13,Misc
+2025-04-02,05:14:19,Salary,debit,500.0,-313.87,Income
+2025-04-03,05:15:08,Gift From Grandma,credit,200.0,-113.87,Gift
+2025-04-03,05:15:30,Salary,debit,200.0,313.87,Income
