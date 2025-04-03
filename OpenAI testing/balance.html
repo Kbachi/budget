@@ -2,150 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Tracker</title>
-    <style>
-        body {
-            background: linear-gradient(to top, #ffffff, #1e90ff);
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
-        }
-        .balance-box {
-            background-color: #f0f8ff;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 8px;
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .input-field {
-            margin: 15px 0;
-            padding: 10px;
-            width: 100%;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        .button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #1e90ff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            margin: 10px 0;
-            transition: background-color 0.3s ease;
-        }
-        .button:hover {
-            background-color: #4682b4;
-        }
-        .button:disabled {
-            background-color: #dcdcdc;
-            cursor: not-allowed;
-        }
-        .message {
-            margin-top: 20px;
-            color: green;
-        }
-    </style>
+    <title>Budget App - Balance</title>
 </head>
 <body>
-
-<div class="container">
-    <h2>Finance Tracker</h2>
-
-    <div class="balance-box" id="balance-box">
-        Balance: £0.00
-    </div>
-
-    <form id="finance-form">
-        <input type="text" class="input-field" id="description" placeholder="Enter description" required>
-        <input type="number" class="input-field" id="amount" placeholder="Enter amount" step="0.01" required>
+    <h1>Budget App</h1>
+    <h2>Current Balance: ${{ balance | round(2) }}</h2>
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: green;">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
+    <h3>Add New Transaction</h3>
+    <form action="{{ url_for('index') }}" method="POST">
+        <label for="date">Date (YYYY-MM-DD):</label>
+        <input type="date" id="date" name="date"><br><br>
         
-        <label for="txn-type">Transaction Type:</label>
-        <select id="txn-type" class="input-field" required>
-            <option value="credit">Credit</option>
-            <option value="debit">Debit</option>
-        </select>
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required><br><br>
         
-        <label for="category">Category:</label>
-        <input type="text" class="input-field" id="category" placeholder="Enter category" required>
+        <label for="amount">Amount (negative for expenses, positive for income):</label>
+        <input type="text" id="amount" name="amount" required><br><br>
         
-        <button type="button" class="button" id="add-entry-btn">Add Entry</button>
-        <button type="button" class="button" id="delete-entry-btn">Delete Entry</button>
+        <button type="submit">Add Transaction</button>
     </form>
-
-    <div class="message" id="message"></div>
-
-    <!-- Home Button -->
-    <a href="home.html">
-        <button class="button">Home</button>
-    </a>
-</div>
-
-<script>
-    // Initial balance display
-    let balance = 0.00;
-    const balanceBox = document.getElementById('balance-box');
-    const messageBox = document.getElementById('message');
-
-    // Elements
-    const descriptionField = document.getElementById('description');
-    const amountField = document.getElementById('amount');
-    const txnTypeField = document.getElementById('txn-type');
-    const categoryField = document.getElementById('category');
-    const addEntryBtn = document.getElementById('add-entry-btn');
-    const deleteEntryBtn = document.getElementById('delete-entry-btn');
-
-    // Add entry button click event
-    addEntryBtn.addEventListener('click', () => {
-        const description = descriptionField.value.trim();
-        const amount = parseFloat(amountField.value);
-        const txnType = txnTypeField.value;
-        const category = categoryField.value.trim();
-
-        if (description && !isNaN(amount) && category) {
-            // Update balance
-            if (txnType === 'credit') {
-                balance += amount;
-            } else {
-                balance -= amount;
-            }
-
-            // Update balance box and clear input fields
-            balanceBox.innerText = `Balance: £${balance.toFixed(2)}`;
-            messageBox.innerText = `✅ Entry added: £${amount.toFixed(2)} ${txnType} for ${description} under ${category}.`;
-
-            // Clear fields after successful submission
-            descriptionField.value = '';
-            amountField.value = '';
-            categoryField.value = '';
-        } else {
-            messageBox.innerText = '❌ Please fill in all fields correctly.';
-            messageBox.style.color = 'red';
-        }
-    });
-
-    // Delete entry button click event (simulate deleting last entry)
-    deleteEntryBtn.addEventListener('click', () => {
-        balance = 0.00;
-        balanceBox.innerText = `Balance: £${balance.toFixed(2)}`;
-        messageBox.innerText = '✅ All entries deleted. Balance reset.';
-    });
-</script>
-
+    
+    <h3>Transactions</h3>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction['Date'] }}</td>
+                <td>{{ transaction['Description'] }}</td>
+                <td>{{ transaction['Category'] }}</td>
+                <td>{{ transaction['Amount'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
