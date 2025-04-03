@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Banking App</title>
+  <style>
+    /* Global Styles */
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      width: 100%;
+      overflow-y: auto;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #4da6ff, #ffe0bd);
+    }
+    .app-container {
+      width: 100%;
+      min-height: 100vh;
+      background-color: #f4f7fe;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Top Bar */
+    .top-bar {
+      background-color: #4da6ff;
+      padding: 16px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .search-bar {
+      background: #fff;
+      padding: 8px 12px;
+      border-radius: 20px;
+      flex-grow: 1;
+      margin: 0 10px;
+      color: #333;
+    }
+    /* Actions */
+    .actions {
+      display: flex;
+      justify-content: space-around;
+      padding: 16px 10px;
+      background: #e9eff9;
+    }
+    .actions a {
+      text-align: center;
+      font-size: 14px;
+      color: #4da6ff;
+      text-decoration: none;
+    }
+    /* Transactions Section */
+    .transactions-wrapper {
+      margin: 16px;
+    }
+    .transactions {
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      transition: max-height 0.3s ease-out;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+    .transactions.collapsed {
+      max-height: 150px;
+      overflow-y: hidden;
+    }
+    .transactions.expanded {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .transaction {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .transaction:last-child {
+      border-bottom: none;
+    }
+    .transaction-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .transaction-desc {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .transaction-category {
+      font-size: 12px;
+      color: #888;
+    }
+    .transaction-amount {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .toggle-container {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .toggle-btn {
+      background-color: #4da6ff;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: background-color 0.2s;
+    }
+    .toggle-btn:hover {
+      background-color: #2d87d7;
+    }
+    /* Chart Section */
+    .chart {
+      background: #fff;
+      margin: 16px;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+    .chart .amount {
+      font-size: 24px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+    /* Bottom Navigation */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: #e9eff9;
+      padding: 12px 0;
+      border-top: 1px solid #ddd;
+    }
+    .bottom-nav a {
+      text-align: center;
+      font-size: 12px;
+      color: #4da6ff;
+      text-decoration: none;
+    }
+    .bottom-nav .active {
+      font-weight: bold;
+    }
+  </style>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div>BV</div>
+      <div class="search-bar">Search</div>
+      <div>📊</div>
+    </div>
+    <!-- Actions -->
+    <div class="actions">
+      <a href="#">➕<br>Add money</a>
+      <a href="#">🔁<br>Move</a>
+      <a href="#">🏠<br>Details</a>
+      <a href="#">⋯<br>More</a>
+    </div>
+    <!-- Transactions Section -->
+    <div class="transactions-wrapper">
+      <div class="transactions collapsed" id="transactionsContainer">
+        <!-- Transaction list rendered by JS -->
+      </div>
+      <div class="toggle-container">
+        <button class="toggle-btn" id="toggleButton">Show More</button>
+      </div>
+    </div>
+    <!-- Chart Section -->
+    <div class="chart" id="chartSection" onclick="window.location.href='monthly-charts.html'">
+      <div class="amount" id="spentAmount">Spent this month: £0.00</div>
+      <div id="balanceText">Current Balance: £0.00</div>
+      <canvas id="monthlyChart" style="margin-top:16px; width:100%; height:200px;"></canvas>
+    </div>
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <a href="home.html" class="active">🏠<br>Home</a>
+      <a href="saym.html">🤖<br>Saym</a>
+      <a href="#">💸<br>Payments</a>
+      <a href="#">🔍<br>Search</a>
+      <a href="#">💳<br>Cards</a>
+    </div>
+  </div>
+  <script>
+    let allTransactions = [];
+    let showAll = false;
+    
+    function loadFinanceData() {
+      fetch('finance.csv')
+        .then(response => response.text())
+        .then(text => {
+          const lines = text.split('\n').filter(line => line.trim() !== '');
+          const headers = lines[0].split(',');
+          allTransactions = [];
+          for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].split(',');
+            if (values.length === headers.length) {
+              const transaction = {};
+              for (let j = 0; j < headers.length; j++) {
+                transaction[headers[j].trim()] = values[j].trim();
+              }
+              allTransactions.push(transaction);
+            }
+          }
+          renderTransactions();
+          updateChart();
+        })
+        .catch(error => {
+          console.error('Error loading finance data:', error);
+        });
+    }
+    
+    function renderTransactions() {
+      const transactionsContainer = document.getElementById('transactionsContainer');
+      transactionsContainer.innerHTML = '';
+      const transactionsToRender = allTransactions.slice().reverse();
+      transactionsToRender.forEach(tx => {
+        const txDiv = document.createElement('div');
+        txDiv.className = 'transaction';
+        
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'transaction-info';
+        const descSpan = document.createElement('span');
+        descSpan.className = 'transaction-desc';
+        descSpan.textContent = tx['Description'];
+        const categorySpan = document.createElement('span');
+        categorySpan.className = 'transaction-category';
+        categorySpan.textContent = tx['Category'] ? tx['Category'] : 'Uncategorized';
+        infoDiv.appendChild(descSpan);
+        infoDiv.appendChild(categorySpan);
+        
+        const amountSpan = document.createElement('div');
+        amountSpan.className = 'transaction-amount';
+        const amount = parseFloat(tx['Amount']);
+        if (tx['Transaction Type'].toLowerCase() === 'credit') {
+          amountSpan.textContent = `+£${amount.toFixed(2)}`;
+          amountSpan.style.color = 'green';
+        } else {
+          amountSpan.textContent = `-£${amount.toFixed(2)}`;
+          amountSpan.style.color = 'red';
+        }
+        
+        txDiv.appendChild(infoDiv);
+        txDiv.appendChild(amountSpan);
+        transactionsContainer.appendChild(txDiv);
+      });
+      
+      if (showAll) {
+        transactionsContainer.classList.remove('collapsed');
+        transactionsContainer.classList.add('expanded');
+      } else {
+        transactionsContainer.classList.remove('expanded');
+        transactionsContainer.classList.add('collapsed');
+      }
+      document.getElementById('toggleButton').textContent = showAll ? 'Show Less' : 'Show More';
+    }
+    
+    function updateChart() {
+      if (allTransactions.length === 0) return;
+      
+      const latestBalance = parseFloat(allTransactions[allTransactions.length - 1]['Balance']);
+      document.getElementById('balanceText').textContent = `Current Balance: £${latestBalance.toFixed(2)}`;
+      
+      const latestMonth = allTransactions[allTransactions.length - 1]['Date'].substring(0, 7);
+      let spent = 0;
+      let dailySpending = {};
+      allTransactions.forEach(tx => {
+        if (tx['Transaction Type'].toLowerCase() === 'debit' && tx['Date'].startsWith(latestMonth)) {
+          const amt = parseFloat(tx['Amount']);
+          spent += amt;
+          const day = tx['Date'].split('-')[2];
+          dailySpending[day] = (dailySpending[day] || 0) + amt;
+        }
+      });
+      document.getElementById('spentAmount').textContent = `Spent this month: £${spent.toFixed(2)}`;
+      
+      const labels = Object.keys(dailySpending).sort((a, b) => a - b);
+      const dataPoints = labels.map(day => dailySpending[day]);
+      
+      const ctx = document.getElementById('monthlyChart').getContext('2d');
+      if (window.monthlyChart) {
+        window.monthlyChart.destroy();
+      }
+      window.monthlyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Daily Spending',
+            data: dataPoints,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: `Spending in ${latestMonth}`
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    
+    document.getElementById('toggleButton').addEventListener('click', function () {
+      showAll = !showAll;
+      renderTransactions();
+    });
+    
+    window.addEventListener('load', loadFinanceData);
+  </script>
+</body>
+</html>
