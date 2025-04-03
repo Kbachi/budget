@@ -1,62 +1,105 @@
+import os
 import csv
-import datetime
+from datetime import datetime, timedelta
+import re
+from finance_utils import read_finance_csv, format_finance_data
+from category_keywords import CATEGORY_KEYWORDS
 
-def load_keywords():
-    return {
-        "Food": ["grocery", "restaurant", "coffee", "snack"],
-        "Entertainment": ["movie", "concert", "game", "netflix", "spotify"],
-        "Transport": ["train", "bus", "uber", "taxi", "fuel"],
-        "Housing": ["rent", "mortgage", "electric", "water", "bill"],
-        "Health": ["medicine", "doctor", "hospital"],
-        "Gift": ["gift", "present"],
-        "Misc": ["uncategorized", "misc"],
+FINANCE_FILE = "finance.csv"
+
+def initialize_finance_csv(filename=FINANCE_FILE):
+    if not os.path.exists(filename):
+        with open(filename, mode='w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=["Date", "Time", "Description", "Transaction Type", "Amount", "Balance", "Category"])
+            writer.writeheader()
+
+def get_latest_balance(filename=FINANCE_FILE):
+    try:
+        with open(filename, mode='r') as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+            if not rows:
+                return 0.0
+            return float(rows[-1]["Balance"])
+    except Exception as e:
+        print("Error reading balance:", e)
+        return 0.0
+
+def clean_description(desc):
+    filler_words = [
+        "today", "yesterday", "last week", "2 weeks ago",
+        "with cash", "cash", "using", "via", "at", "for", "in", "on",
+        "a", "an", "the", "just", "only", "my", "me"
+    ]
+    pattern = re.compile(r'\b(' + '|'.join(re.escape(word) for word in filler_words) + r')\b', flags=re.IGNORECASE)
+
+    desc = pattern.sub('', desc)
+
+    desc = desc.strip(" ,.-")
+    desc = re.sub(r'\\s+', ' ', desc)
+    return " ".join(word.capitalize() if word.lower() not in ["and", "or", "the", "of"] else word for word in desc.split())
+
+def auto_categorize(description):
+    desc = description.lower()
+    for category, keywords in CATEGORY_KEYWORDS.items():
+        if any(word in desc for word in keywords):
+            return category.capitalize()
+    return "Uncategorized"
+
+def add_finance_entry(date, description, txn_type, amount, category, filename=FINANCE_FILE):
+    balance = get_latest_balance(filename)
+    new_balance = balance + amount if txn_type == "credit" else balance - amount
+    time_now = datetime.now().strftime("%H:%M:%S")
+
+    new_row = {
+        "Date": date,
+        "Time": time_now,
+        "Description": description,
+        "Transaction Type": txn_type,
+        "Amount": amount,
+        "Balance": new_balance,
+        "Category": category
     }
 
-def categorize_transaction(description, keywords):
-    desc_lower = description.lower()
-    for category, words in keywords.items():
-        if any(word in desc_lower for word in words):
-            return category
-    return "Misc"
+    try:
+        with open(filename, mode='a', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=new_row.keys())
+            writer.writerow(new_row)
+        return new_row
+    except Exception as e:
+        print(f"Error writing to CSV: {e}")
+        return None
 
-def add_expenditure():
-    transactions = []
-    keywords = load_keywords()
-    print("Enter your expenditures. Type 'DONE' to confirm and save, or 'REMOVE' to delete the last entry.")
+def input_finance_entry():
+    print("Please enter the following details for your expenditure or income:")
+
+    date = input("Enter the date (YYYY-MM-DD): ")
+    description = input("Enter the description of the transaction: ")
+    txn_type = input("Enter the transaction type (credit/debit): ").lower()
+    amount = float(input("Enter the amount: "))
+    category = input("Enter the category (e.g., groceries, entertainment, etc.): ")
+
+    category = auto_categorize(category)  # Automatically categorize if needed
+
+    return date, description, txn_type, amount, category
+
+def main():
+    initialize_finance_csv()
 
     while True:
-        description = input("Enter transaction description: ")
-        if description.lower() == "done":
+        print("\nPlease enter a new finance entry.")
+        date, description, txn_type, amount, category = input_finance_entry()
+
+        result = add_finance_entry(date, description, txn_type, amount, category)
+        if result:
+            print(f"✅ Entry added: {description} ({txn_type}) of £{amount:.2f} on {date} in {category}.")
+        else:
+            print("❌ Failed to add the entry.")
+
+        more_entries = input("\nWould you like to add another entry? (yes/no): ").lower()
+        if more_entries != 'yes':
+            print("Goodbye! Stay financially sharp.")
             break
-        elif description.lower() == "remove":
-            if transactions:
-                removed = transactions.pop()
-                print(f"Removed: {removed}")
-            else:
-                print("No transactions to remove.")
-            continue
-        
-        transaction_type = input("Enter transaction type (debit/credit/cash): ").lower()
-        amount = float(input("Enter amount: "))
-        balance = transactions[-1][5] - amount if transaction_type == "debit" else transactions[-1][5] + amount if transactions else amount
-        category = categorize_transaction(description, keywords)
-        confirm_category = input(f"Suggested category: {category}. Accept? (yes/no): ")
-        if confirm_category.lower() == "no":
-            category = input("Enter custom category: ")
-        
-        transaction = [datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), description, transaction_type, amount, balance, category]
-        transactions.append(transaction)
-        print(f"Added: {transaction}")
-
-    save_transactions(transactions)
-
-def save_transactions(transactions):
-    filename = "finance.csv"
-    with open(filename, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        for transaction in transactions:
-            writer.writerow(transaction)
-    print(f"Transactions saved to {filename}")
 
 if __name__ == "__main__":
-    add_expenditure()
+    main()
