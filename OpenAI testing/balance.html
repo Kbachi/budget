@@ -10,11 +10,14 @@
       padding: 0;
       font-family: 'Arial', sans-serif;
       background: linear-gradient(to bottom, #4da6ff, #ffe0bd);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
     .container {
       width: 100%;
       max-width: 500px;
-      margin: 20px auto;
       background: #fff;
       padding: 20px;
       border-radius: 10px;
@@ -46,6 +49,7 @@
       border-radius: 5px;
       cursor: pointer;
       text-align: center;
+      margin-top: 10px;
     }
     .expenditure-list {
       margin-top: 20px;
@@ -90,11 +94,13 @@
     <button class="button" id="addExpenditure">Add Expenditure</button>
     <div class="expenditure-list" id="expenditureList"></div>
     <button class="button" id="confirmExpenditures">Confirm Expenditures</button>
+    <button class="button" id="homeButton">Return to Home</button>
   </div>
   <script>
     const expenditureList = document.getElementById('expenditureList');
     const addExpenditureButton = document.getElementById('addExpenditure');
     const confirmButton = document.getElementById('confirmExpenditures');
+    const homeButton = document.getElementById('homeButton');
     const expenditures = [];
     
     addExpenditureButton.addEventListener('click', () => {
@@ -131,6 +137,10 @@
       .then(response => response.json())
       .then(data => alert(data.message))
       .catch(error => alert('Error confirming expenditures'));
+    });
+
+    homeButton.addEventListener('click', () => {
+      window.location.href = '/';
     });
   </script>
 </body>
