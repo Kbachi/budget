@@ -144,7 +144,6 @@
     <!-- Chat Section -->
     <div class="chat-wrapper">
       <div class="chat-container" id="chatContainer">
-        <!-- Initial bot message -->
         <div class="chat-message bot">Hello, I'm Saym! How can I help you today?</div>
       </div>
       <div class="chat-input-container">
@@ -154,8 +153,8 @@
     </div>
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-      <a href="home">🏠<br>Home</a>
-      <a href="saym" class="active">🤖<br>Saym</a>
+      <a href="home.html">🏠<br>Home</a>
+      <a href="saym.html" class="active">🤖<br>Saym</a>
       <a href="#">💸<br>Payments</a>
       <a href="#">🔍<br>Search</a>
       <a href="#">💳<br>Cards</a>
@@ -166,7 +165,7 @@
     const chatInput = document.getElementById('chatInput');
     const sendButton = document.getElementById('sendButton');
 
-    // Function to append messages to the chat container
+    // Append a message to the chat container
     function appendMessage(message, sender) {
       const messageDiv = document.createElement('div');
       messageDiv.className = 'chat-message ' + sender;
@@ -175,7 +174,7 @@
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    // Function to send message to the backend
+    // Send a message to the Flask backend
     function sendMessage(message) {
       fetch('/chat', {
         method: 'POST',
@@ -192,7 +191,7 @@
       });
     }
 
-    // Event listener for the send button
+    // Event listeners for sending messages
     sendButton.addEventListener('click', function() {
       const message = chatInput.value.trim();
       if(message !== '') {
@@ -202,7 +201,6 @@
       }
     });
 
-    // Allow pressing Enter to send a message
     chatInput.addEventListener('keypress', function(e) {
       if(e.key === 'Enter') {
         sendButton.click();
