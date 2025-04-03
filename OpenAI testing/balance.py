@@ -51,7 +51,7 @@ def add_expenditure():
     save_transactions(transactions)
 
 def save_transactions(transactions):
-    filename = "transactions.csv"
+    filename = "finance.csv"
     with open(filename, mode='a', newline='') as file:
         writer = csv.writer(file)
         for transaction in transactions:
