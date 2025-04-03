@@ -97,16 +97,10 @@
 </div>
 
 <script>
-    // Fetch the current balance from the Flask backend when the page loads
-    window.onload = function() {
-        fetch('/get_balance')
-            .then(response => response.json())
-            .then(data => {
-                const balanceBox = document.getElementById('balance-box');
-                balanceBox.innerText = `Balance: £${data.balance.toFixed(2)}`;
-            })
-            .catch(error => console.error('Error fetching balance:', error));
-    };
+    // Initial balance display
+    let balance = 0.00;
+    const balanceBox = document.getElementById('balance-box');
+    const messageBox = document.getElementById('message');
 
     // Elements
     const descriptionField = document.getElementById('description');
@@ -115,7 +109,6 @@
     const categoryField = document.getElementById('category');
     const addEntryBtn = document.getElementById('add-entry-btn');
     const deleteEntryBtn = document.getElementById('delete-entry-btn');
-    const messageBox = document.getElementById('message');
 
     // Add entry button click event
     addEntryBtn.addEventListener('click', () => {
@@ -125,28 +118,16 @@
         const category = categoryField.value.trim();
 
         if (description && !isNaN(amount) && category) {
-            // Update balance on the front-end
-            fetch('/add_entry', {
-                method: 'POST',
-                body: JSON.stringify({
-                    description: description,
-                    amount: amount,
-                    txnType: txnType,
-                    category: category
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                balanceBox.innerText = `Balance: £${data.new_balance.toFixed(2)}`;
-                messageBox.innerText = `✅ Entry added: £${amount.toFixed(2)} ${txnType} for ${description} under ${category}.`;
-            })
-            .catch(error => {
-                messageBox.innerText = '❌ Failed to add the entry.';
-                messageBox.style.color = 'red';
-            });
+            // Update balance
+            if (txnType === 'credit') {
+                balance += amount;
+            } else {
+                balance -= amount;
+            }
+
+            // Update balance box and clear input fields
+            balanceBox.innerText = `Balance: £${balance.toFixed(2)}`;
+            messageBox.innerText = `✅ Entry added: £${amount.toFixed(2)} ${txnType} for ${description} under ${category}.`;
 
             // Clear fields after successful submission
             descriptionField.value = '';
@@ -158,15 +139,11 @@
         }
     });
 
-    // Delete entry button click event
+    // Delete entry button click event (simulate deleting last entry)
     deleteEntryBtn.addEventListener('click', () => {
-        fetch('/delete_entries', { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                balanceBox.innerText = `Balance: £${data.new_balance.toFixed(2)}`;
-                messageBox.innerText = '✅ All entries deleted. Balance reset.';
-            })
-            .catch(error => console.error('Error deleting entries:', error));
+        balance = 0.00;
+        balanceBox.innerText = `Balance: £${balance.toFixed(2)}`;
+        messageBox.innerText = '✅ All entries deleted. Balance reset.';
     });
 </script>
 
