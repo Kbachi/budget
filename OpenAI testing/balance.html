@@ -1,202 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manage Expenditures</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to bottom, #4da6ff, #ffe0bd);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      width: 100%;
-      max-width: 500px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 10px;
-    }
-    .input-group label {
-      font-weight: bold;
-    }
-    .input-group input, .input-group select {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .button {
-      background-color: #4da6ff;
-      color: white;
-      border: none;
-      padding: 10px;
-      width: 100%;
-      border-radius: 5px;
-      cursor: pointer;
-      text-align: center;
-      margin-top: 10px;
-    }
-    .expenditure-list {
-      margin-top: 20px;
-    }
-    .expenditure-item {
-      background: #f4f4f4;
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .remove-btn {
-      background: red;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .confirmation {
-      margin-top: 20px;
-      color: green;
-      font-weight: bold;
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker</title>
+    <style>
+        body {
+            background: linear-gradient(to top, #ffffff, #1e90ff);
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        .balance-box {
+            background-color: #f0f8ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .input-field {
+            margin: 15px 0;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #4682b4;
+        }
+        .button:disabled {
+            background-color: #dcdcdc;
+            cursor: not-allowed;
+        }
+        .message {
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Manage Expenditures</h2>
 
-    <!-- Starting Balance Input -->
-    <div class="input-group">
-      <label for="startingBalance">Starting Balance:</label>
-      <input type="number" id="startingBalance" placeholder="Enter starting balance" />
-      <button class="button" id="setBalance">Set Balance</button>
+<div class="container">
+    <h2>Finance Tracker</h2>
+
+    <div class="balance-box" id="balance-box">
+        Balance: £0.00
     </div>
 
-    <!-- Expenditure Inputs -->
-    <div class="input-group">
-      <label for="description">Description:</label>
-      <input type="text" id="description" placeholder="Enter transaction description" />
-    </div>
-    <div class="input-group">
-      <label for="transactionType">Type:</label>
-      <select id="transactionType">
-        <option value="debit">Debit</option>
-        <option value="credit">Credit</option>
-      </select>
-    </div>
-    <div class="input-group">
-      <label for="amount">Amount:</label>
-      <input type="number" id="amount" placeholder="Enter amount" />
-    </div>
+    <form id="finance-form">
+        <input type="text" class="input-field" id="description" placeholder="Enter description" required>
+        <input type="number" class="input-field" id="amount" placeholder="Enter amount" step="0.01" required>
+        
+        <label for="txn-type">Transaction Type:</label>
+        <select id="txn-type" class="input-field" required>
+            <option value="credit">Credit</option>
+            <option value="debit">Debit</option>
+        </select>
+        
+        <label for="category">Category:</label>
+        <input type="text" class="input-field" id="category" placeholder="Enter category" required>
+        
+        <button type="button" class="button" id="add-entry-btn">Add Entry</button>
+        <button type="button" class="button" id="delete-entry-btn">Delete Entry</button>
+    </form>
 
-    <button class="button" id="addExpenditure">Add Expenditure</button>
-    <div class="expenditure-list" id="expenditureList"></div>
+    <div class="message" id="message"></div>
+</div>
 
-    <button class="button" id="confirmExpenditures">Confirm Expenditures</button>
-    <button class="button" id="homeButton">Return to Home</button>
+<script>
+    // Initial balance display
+    let balance = 0.00;
+    const balanceBox = document.getElementById('balance-box');
+    const messageBox = document.getElementById('message');
 
-    <div class="confirmation" id="confirmationMessage"></div>
-  </div>
+    // Elements
+    const descriptionField = document.getElementById('description');
+    const amountField = document.getElementById('amount');
+    const txnTypeField = document.getElementById('txn-type');
+    const categoryField = document.getElementById('category');
+    const addEntryBtn = document.getElementById('add-entry-btn');
+    const deleteEntryBtn = document.getElementById('delete-entry-btn');
 
-  <script>
-    let expenditures = [];
-    let currentBalance = 0;
+    // Add entry button click event
+    addEntryBtn.addEventListener('click', () => {
+        const description = descriptionField.value.trim();
+        const amount = parseFloat(amountField.value);
+        const txnType = txnTypeField.value;
+        const category = categoryField.value.trim();
 
-    // Set starting balance
-    document.getElementById("setBalance").addEventListener("click", () => {
-      const balanceInput = document.getElementById("startingBalance").value;
-      if (balanceInput) {
-        currentBalance = parseFloat(balanceInput);
-        alert("Starting balance set to £" + currentBalance.toFixed(2));
-      }
+        if (description && !isNaN(amount) && category) {
+            // Update balance
+            if (txnType === 'credit') {
+                balance += amount;
+            } else {
+                balance -= amount;
+            }
+
+            // Update balance box and clear input fields
+            balanceBox.innerText = `Balance: £${balance.toFixed(2)}`;
+            messageBox.innerText = `✅ Entry added: £${amount.toFixed(2)} ${txnType} for ${description} under ${category}.`;
+
+            // Clear fields after successful submission
+            descriptionField.value = '';
+            amountField.value = '';
+            categoryField.value = '';
+        } else {
+            messageBox.innerText = '❌ Please fill in all fields correctly.';
+            messageBox.style.color = 'red';
+        }
     });
 
-    // Add expenditure to the list
-    document.getElementById("addExpenditure").addEventListener("click", () => {
-      const description = document.getElementById("description").value;
-      const transactionType = document.getElementById("transactionType").value;
-      const amount = parseFloat(document.getElementById("amount").value);
-
-      if (!description || isNaN(amount)) {
-        alert("Please enter a valid description and amount.");
-        return;
-      }
-
-      // Update the balance based on the transaction type
-      if (transactionType === "debit") {
-        currentBalance -= amount;
-      } else {
-        currentBalance += amount;
-      }
-
-      expenditures.push({ description, transaction_type: transactionType, amount, currentBalance });
-      updateExpenditureList();
-      displayConfirmation("Expenditure added successfully.");
+    // Delete entry button click event (simulate deleting last entry)
+    deleteEntryBtn.addEventListener('click', () => {
+        balance = 0.00;
+        balanceBox.innerText = `Balance: £${balance.toFixed(2)}`;
+        messageBox.innerText = '✅ All entries deleted. Balance reset.';
     });
+</script>
 
-    // Update the expenditure list display
-    function updateExpenditureList() {
-      const expenditureList = document.getElementById("expenditureList");
-      expenditureList.innerHTML = "";
-      expenditures.forEach((exp, index) => {
-        const div = document.createElement("div");
-        div.className = "expenditure-item";
-        div.innerHTML = `${exp.description} - £${exp.amount} (${exp.transaction_type}) <br> Balance: £${exp.currentBalance.toFixed(2)} 
-          <button class="remove-btn" onclick="removeExpenditure(${index})">X</button>`;
-        expenditureList.appendChild(div);
-      });
-    }
-
-    // Remove an expenditure from the list
-    function removeExpenditure(index) {
-      expenditures.splice(index, 1);
-      updateExpenditureList();
-      displayConfirmation("Expenditure removed successfully.");
-    }
-
-    // Show confirmation message
-    function displayConfirmation(message) {
-      const confirmationMessage = document.getElementById("confirmationMessage");
-      confirmationMessage.textContent = message;
-      setTimeout(() => {
-        confirmationMessage.textContent = "";
-      }, 3000);
-    }
-
-    // Confirm expenditures
-    document.getElementById("confirmExpenditures").addEventListener("click", () => {
-      fetch("/confirm_expenditures", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ expenditures })
-      })
-        .then(response => response.json())
-        .then(data => alert(data.message))
-        .catch(error => alert("Error confirming expenditures"));
-    });
-
-    // Return to home page
-    document.getElementById("homeButton").addEventListener("click", () => {
-      window.location.href = "home.html";
-    });
-  </script>
 </body>
 </html>
