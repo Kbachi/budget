@@ -1,76 +1,97 @@
+from flask import Flask, render_template, request, redirect, url_for, flash
 import csv
 import os
 from datetime import datetime
+import category_keywords
 
-# Define the CSV file name and expected header fields
-CSV_FILE = "finance.csv"
-FIELDNAMES = ["Date", "Description", "Category", "Amount"]
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Replace with a secure key
+CSV_FILE = 'finance.csv'
+FIELDNAMES = ['Date', 'Description', 'Category', 'Amount']
 
 def initialize_csv():
-    """Ensure the CSV file exists with the proper header."""
+    """Create the CSV file with headers if it doesn't exist."""
     if not os.path.exists(CSV_FILE):
-        with open(CSV_FILE, mode='w', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=FIELDNAMES)
+        with open(CSV_FILE, 'w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
             writer.writeheader()
 
-def add_transaction(date, description, category, amount):
-    """Append a new transaction record to the CSV file."""
-    with open(CSV_FILE, mode='a', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=FIELDNAMES)
+def get_category(description):
+    """
+    Determine the category for a given description based on keywords.
+    Searches each category's list of keywords from category_keywords.py.
+    Returns the first matching category or 'Uncategorized' if none match.
+    """
+    for category, keywords in category_keywords.CATEGORY_KEYWORDS.items():
+        for keyword in keywords:
+            if keyword.lower() in description.lower():
+                return category
+    return "Uncategorized"
+
+def add_transaction(date, description, amount):
+    """
+    Add a new transaction to the CSV file.
+    The category is automatically determined from the description.
+    """
+    category = get_category(description)
+    with open(CSV_FILE, 'a', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
         writer.writerow({
-            "Date": date,
-            "Description": description,
-            "Category": category,
-            "Amount": amount
+            'Date': date,
+            'Description': description,
+            'Category': category,
+            'Amount': amount
         })
 
 def calculate_balance():
-    """Calculate the running balance by summing the 'Amount' field from each record."""
+    """Read the CSV and sum up the amounts to calculate the current balance."""
     balance = 0.0
-    with open(CSV_FILE, mode='r') as file:
-        reader = csv.DictReader(file)
+    if not os.path.exists(CSV_FILE):
+        return balance
+    with open(CSV_FILE, 'r') as f:
+        reader = csv.DictReader(f)
         for row in reader:
             try:
-                balance += float(row["Amount"])
+                balance += float(row['Amount'])
             except ValueError:
-                print(f"Warning: Skipping invalid amount '{row['Amount']}' in row: {row}")
+                pass  # Ignore invalid amounts
     return balance
 
-def main():
-    # Initialize the CSV file if necessary
+def get_transactions():
+    """Retrieve all transactions from the CSV file."""
+    transactions = []
+    if not os.path.exists(CSV_FILE):
+        return transactions
+    with open(CSV_FILE, 'r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            transactions.append(row)
+    return transactions
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
     initialize_csv()
-    
-    # Calculate and display the current balance
-    current_balance = calculate_balance()
-    print(f"Current balance: ${current_balance:.2f}")
-    
-    # Ask the user if they want to add a new transaction
-    choice = input("Do you want to add a new transaction? (y/n): ").strip().lower()
-    if choice == 'y':
-        # Get date input; default to today's date if left blank
-        date_input = input("Enter the date (YYYY-MM-DD) or leave blank for today: ").strip()
+    if request.method == 'POST':
+        # Use provided date or default to today if not given
+        date_input = request.form.get('date')
         if not date_input:
             date_input = datetime.today().strftime("%Y-%m-%d")
-        
-        description = input("Enter the description: ").strip()
-        category = input("Enter the category: ").strip()
-        
-        amount_input = input("Enter the amount (use negative for expenses, positive for income): ").strip()
+        description = request.form.get('description')
+        amount_input = request.form.get('amount')
         try:
             amount = float(amount_input)
-        except ValueError:
-            print("Invalid amount entered. Transaction aborted.")
-            return
+        except (ValueError, TypeError):
+            flash("Invalid amount entered. Please try again.")
+            return redirect(url_for('index'))
         
-        # Add the new transaction to the CSV file
-        add_transaction(date_input, description, category, amount)
-        print("Transaction added successfully!")
-        
-        # Display the updated balance
-        updated_balance = calculate_balance()
-        print(f"Updated balance: ${updated_balance:.2f}")
-    else:
-        print("No transaction added. Exiting.")
+        add_transaction(date_input, description, amount)
+        flash("Transaction added successfully!")
+        return redirect(url_for('index'))
+    
+    # For GET requests, calculate balance and load transactions
+    balance = calculate_balance()
+    transactions = get_transactions()
+    return render_template('balance.html', balance=balance, transactions=transactions)
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
