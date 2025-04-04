@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import chatbot  # This is your chatbot.py module
+from chatbot import get_response
 
 app = Flask(__name__, static_folder='static', template_folder='.')
 # If you plan to serve your pages on the same domain, use the above setup.

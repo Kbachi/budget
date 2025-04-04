@@ -7,6 +7,8 @@ from finance_utils import read_finance_csv, format_finance_data
 from category_keywords import CATEGORY_KEYWORDS
 from dotenv import load_dotenv
 
+load_dotenv()
+
 FINANCE_FILE = "finance.csv"
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
