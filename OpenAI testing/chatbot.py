@@ -5,9 +5,10 @@ from datetime import datetime, timedelta
 from openai import OpenAI
 from finance_utils import read_finance_csv, format_finance_data
 from category_keywords import CATEGORY_KEYWORDS
+from dotenv import load_dotenv
 
 FINANCE_FILE = "finance.csv"
-client = OpenAI(api_key="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")  # Replace with your actual API key
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def initialize_finance_csv(filename=FINANCE_FILE):
     if not os.path.exists(filename):
